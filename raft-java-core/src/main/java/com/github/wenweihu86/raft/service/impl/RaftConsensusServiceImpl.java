@@ -129,7 +129,7 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
 
             if (request.getPrevLogIndex() > raftNode.getRaftLog().getLastLogIndex()) {
                 LOG.info("Rejecting AppendEntries RPC would leave gap, " +
-                        "request prevLogIndex={}, my lastLogIndex={}",
+                                "request prevLogIndex={}, my lastLogIndex={}",
                         request.getPrevLogIndex(), raftNode.getRaftLog().getLastLogIndex());
                 return responseBuilder.build();
             }
@@ -137,7 +137,7 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                     && raftNode.getRaftLog().getEntryTerm(request.getPrevLogIndex())
                     != request.getPrevLogTerm()) {
                 LOG.info("Rejecting AppendEntries RPC: terms don't agree, " +
-                        "request prevLogTerm={} in prevLogIndex={}, my is {}",
+                                "request prevLogTerm={} in prevLogIndex={}, my is {}",
                         request.getPrevLogTerm(), request.getPrevLogIndex(),
                         raftNode.getRaftLog().getEntryTerm(request.getPrevLogIndex()));
                 Validate.isTrue(request.getPrevLogIndex() > 0);
@@ -313,7 +313,7 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
         long newCommitIndex = Math.min(request.getCommitIndex(),
                 request.getPrevLogIndex() + request.getEntriesCount());
         raftNode.setCommitIndex(newCommitIndex);
-        raftNode.getRaftLog().updateMetaData(null,null, null, newCommitIndex);
+        raftNode.getRaftLog().updateMetaData(null, null, null, newCommitIndex);
         if (raftNode.getLastAppliedIndex() < raftNode.getCommitIndex()) {
             // apply state machine
             for (long index = raftNode.getLastAppliedIndex() + 1;

@@ -1,0 +1,26 @@
+syntax="proto2";
+
+package service;
+option java_package = "com.github.wenweihu86.raft.example.server.service";
+option java_outer_classname = "AuctionProto";
+
+message CreateAuctionItemRequest {
+    optional string owner = 1;
+    optional string name = 2;
+    optional float minVal = 3;
+}
+
+message CreateAuctionItemResponse {
+    optional string response = 1;
+}
+
+message BidRequest {
+    optional string bidder = 1;
+    optional string biddedItem = 2;
+    optional float bidVal = 3;
+}
+
+message BidResponse {
+    optional string response = 1;
+}
+

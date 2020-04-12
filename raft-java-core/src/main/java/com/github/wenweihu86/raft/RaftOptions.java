@@ -44,4 +44,65 @@ public class RaftOptions {
 
     // raft的log和snapshot父目录，绝对路径
     private String dataDir = System.getProperty("com.github.wenweihu86.raft.data.dir");
+
+    public void setDataDir(String dataDir) {
+        this.dataDir = dataDir;
+    }
+    public String getDataDir() {
+        return this.dataDir;
+    }
+
+    public void setSnapshotMinLogSize(int snapshotMinLogSize) {
+        this.snapshotMinLogSize = snapshotMinLogSize;
+    }
+    public void setSnapshotPeriodSeconds(int snapshotPeriodSeconds) {
+        this.snapshotPeriodSeconds = snapshotPeriodSeconds;
+    }
+    public void setMaxSegmentFileSize(int maxSegmentFileSize) {
+        this.maxSegmentFileSize = maxSegmentFileSize;
+    }
+
+    public int getMaxSegmentFileSize() {
+        return this.maxSegmentFileSize;
+    }
+
+    public int getRaftConsensusThreadNum() {
+        return this.raftConsensusThreadNum;
+    }
+
+    public int getSnapshotPeriodSeconds() {
+        return snapshotPeriodSeconds;
+    }
+
+    public int getSnapshotMinLogSize() {
+        return this.snapshotMinLogSize;
+    }
+
+    public int getElectionTimeoutMilliseconds() {
+        return this.electionTimeoutMilliseconds;
+    }
+
+    public int getMaxLogEntriesPerRequest() {
+        return this.maxLogEntriesPerRequest;
+    }
+
+    public int getMaxSnapshotBytesPerRequest() {
+        return this.maxSnapshotBytesPerRequest;
+    }
+
+    public boolean isAsyncWrite() {
+        return this.asyncWrite;
+    }
+
+    public long getMaxAwaitTimeout() {
+        return this.maxAwaitTimeout;
+    }
+
+    public long getCatchupMargin() {
+        return this.catchupMargin;
+    }
+
+    public int getHeartbeatPeriodMilliseconds() {
+        return this.heartbeatPeriodMilliseconds;
+    }
 }
