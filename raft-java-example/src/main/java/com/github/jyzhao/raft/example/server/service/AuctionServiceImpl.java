@@ -8,7 +8,9 @@ import com.github.jyzhao.raft.example.server.AuctionStateMachine;
 import com.github.jyzhao.raft.example.server.StateMachineBidReturn;
 import com.github.wenweihu86.raft.Peer;
 import com.github.wenweihu86.raft.RaftNode;
+import com.github.wenweihu86.raft.example.server.service.AuctionProto;
 import com.github.wenweihu86.raft.proto.RaftProto;
+import org.apache.commons.collections4.queue.PredicatedQueue;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.concurrent.locks.Lock;
@@ -27,39 +29,50 @@ public class AuctionServiceImpl implements AuctionService {
     }
 
     @Override
-    public String createAuctionItem(String owner, String name, double minVal) {
+    public AuctionProto.CreateAuctionItemResponse createAuctionItem(AuctionProto.CreateAuctionItemRequest request) {
+        String owner = request.getOwner();
+        String name = request.getName();
+        float minVal = request.getMinVal();
+
+        AuctionProto.CreateAuctionItemResponse.Builder resp =  AuctionProto.CreateAuctionItemResponse.newBuilder();
+
         if (raftNode.getLeaderId() <= 0) {
-            return "fail";
+            return resp.setResponse("fail").build();
         } else if (raftNode.getLeaderId() != raftNode.getLocalServer().getServerId()) {
             onLeaderChangeEvent();
             AuctionService auctionService = BrpcProxy.getProxy(leaderRpcClient, AuctionService.class);
-            return auctionService.createAuctionItem(owner, name, minVal);
+            return auctionService.createAuctionItem(request);
         } else {
             byte[] data = ("createAuction;"+owner+";"+name+";"+String.valueOf(minVal)).getBytes();
             boolean success = raftNode.replicate(data, RaftProto.EntryType.ENTRY_TYPE_DATA);
 
-            if (success) return "success";
-            else return "fail";
+            if (success) return resp.setResponse("success").build();
+            else return resp.setResponse("fail").build();
         }
     }
 
     @Override
-    public String bid(String bidder, String biddedItem, double bidVal) {
+    public AuctionProto.BidResponse bid(AuctionProto.BidRequest reqest) {
+        AuctionProto.BidResponse.Builder resp = AuctionProto.BidResponse.newBuilder();
+
         if (raftNode.getLeaderId() <= 0) {
-            return "fail";
+            return resp.setResponse("fail").build();
         } else if (raftNode.getLeaderId() != raftNode.getLocalServer().getServerId()) {
             onLeaderChangeEvent();
             AuctionService auctionService = BrpcProxy.getProxy(leaderRpcClient, AuctionService.class);
-            return auctionService.bid(bidder, biddedItem, bidVal);
+            return auctionService.bid(reqest);
         } else {
+            String biddedItem = reqest.getBiddedItem();
+            String bidder = reqest.getBidder();
+            float bidVal = reqest.getBidVal();
             StateMachineBidReturn ret = stateMachine.bid(biddedItem, bidVal);
             if (!ret.isSucc) {
-                return ret.message;
+                return resp.setResponse(ret.message).build();
             }
             byte[] data = ("bid;"+bidder+";"+biddedItem+";"+String.valueOf(bidVal)).getBytes();
             boolean success = raftNode.replicate(data, RaftProto.EntryType.ENTRY_TYPE_DATA);
-            if (success) return "success";
-            else return "fail on consensus";
+            if (success) return resp.setResponse("sucess").build();
+            else return resp.setResponse("fail on consensus").build();
         }
     }
 

@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AuctionStateMachine implements StateMachine {
 
     private String raftDataDir;
-    private Map<String, Double> kv = new HashedMap<>();
+    private Map<String, Float> kv = new HashedMap<>();
 
     public AuctionStateMachine(String raftDataDir) {
         this.raftDataDir = raftDataDir;
@@ -53,7 +53,7 @@ public class AuctionStateMachine implements StateMachine {
             String[] reqs = req.split(";");
             String type = reqs[0];
             String key = reqs[1];
-            double val = Double.parseDouble(reqs[2]);
+            float val = Float.parseFloat(reqs[2]);
             switch (type) {
                 case "createAuction":
                     if (!kv.containsKey(key)) {
@@ -71,7 +71,7 @@ public class AuctionStateMachine implements StateMachine {
         }
     }
 
-    public StateMachineBidReturn bid(String biddedItem, double bidVal) {
+    public StateMachineBidReturn bid(String biddedItem, float bidVal) {
         if (!kv.containsKey(biddedItem)) {
             return new StateMachineBidReturn(false, "no such item!");
         }

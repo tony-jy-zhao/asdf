@@ -1,8 +1,10 @@
 package com.github.jyzhao.raft.example.server.service;
 
+import com.github.wenweihu86.raft.example.server.service.AuctionProto;
+
 public interface AuctionService {
 
-    String createAuctionItem(String owner, String name, double minVal);
+    AuctionProto.CreateAuctionItemResponse createAuctionItem(AuctionProto.CreateAuctionItemRequest request);
 
-    String bid(String bidder, String biddedItem, double bidVal);
+    AuctionProto.BidResponse bid(AuctionProto.BidRequest request);
 }
